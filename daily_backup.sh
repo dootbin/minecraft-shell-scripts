@@ -99,3 +99,21 @@ sftp -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$SFTP_REMOTE_PATH/$SFTP_REMOTE_BACK
   put $backup_directory/$backup_file_name
   quit 
 EOF
+
+## Ensure the backup file was transferred to the remote server
+if [ ! -f "$SFTP_REMOTE_PATH/$SFTP_REMOTE_BACKUP_DIRECTORY/$backup_file_name" ]; then
+  echo "Error: Backup file not found at $SFTP_REMOTE_PATH/$SFTP_REMOTE_BACKUP_DIRECTORY/$backup_file_name"
+  exit 1
+fi
+
+## Remove the local backup file
+rm $backup_directory/$backup_file_name
+
+## Ensure the local backup file was removed
+
+if [ -f "$backup_directory/$backup_file_name" ]; then
+  echo "Error: Backup file not removed at $backup_directory/$backup_file_name"
+  exit 1
+fi
+
+echo "Backup completed successfully"
